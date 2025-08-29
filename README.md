@@ -62,9 +62,6 @@ xpdig trace XObject/hello-world
 ## It supports Claims (namespaced objects)
 xpdig trace -n <namespace> Object/hello-world
 
-# Live reload with --watch
-xpdig trace -n <namespace> --watch Object/hello-world
-
 # Support for other context (eg: dev/prod cluster)
 xpdig trace --context <context> Object/hello-world
 

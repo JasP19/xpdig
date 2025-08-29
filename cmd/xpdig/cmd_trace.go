@@ -42,7 +42,7 @@ Live mode is only available for (1) through the use of --watch / --watch-interva
 			&cli.StringFlag{Name: "namespace", Aliases: []string{"n", "ns"}, Usage: "Kubernetes namespace to be used"},
 			&cli.BoolFlag{Name: "stdin", Aliases: []string{"in"}, Usage: "Specify in case file is piped into stdin"},
 			&cli.BoolFlag{Name: "short", Usage: "Return short result columns for small screens"},
-			&cli.BoolFlag{Name: "watch", Aliases: []string{"w"}, Usage: "Refresh trace every 10 seconds"},
+			&cli.BoolFlag{Name: "no-watch", Aliases: []string{"nw"}, Usage: "Disable automatic resource watcher", Value: false},
 			&cli.DurationFlag{
 				Name:    "watch-interval",
 				Aliases: []string{"wi"},
@@ -60,7 +60,6 @@ func runTrace(ctx context.Context, c *cli.Command) error {
 		return err
 	}
 
-	// FIXME: use c.Flags() to get all of them
 	logger.Info("starting xpdig",
 		"component", "main",
 		"info", map[string]any{
@@ -69,6 +68,7 @@ func runTrace(ctx context.Context, c *cli.Command) error {
 			"flags":   getFlags(c),
 		})
 
+	watch := !c.Bool("no-watch")
 	program := tea.NewProgram(
 		app.New(
 			logger.With("component", "bubbles/app"),
@@ -91,7 +91,7 @@ func runTrace(ctx context.Context, c *cli.Command) error {
 				),
 				statusbar.New(),
 				tracer,
-				xpnavigator.WithWatch(c.Bool("watch")),
+				xpnavigator.WithWatch(watch),
 				xpnavigator.WithWatchInterval(c.Duration("watch-interval")),
 				xpnavigator.WithShortColumns(c.Bool("short")),
 			),
